@@ -1,15 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
+    email: '',
     password: '',
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -18,10 +30,20 @@ export default function LoginPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login data:', formData);
+    setError('');
+    setIsLoading(true);
+    
+    const success = await login(formData.email, formData.password);
+    
+    if (success) {
+      router.push('/');
+    } else {
+      setError('Invalid email or password');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -96,17 +118,17 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Full Name */}
+          {/* Email */}
           <div>
             <label className="block text-gray-300 text-sm font-medium mb-2">
-              Full Name
+              Email
             </label>
             <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleInputChange}
-              placeholder="Enter your name"
+              placeholder="Enter your email"
               className="w-full bg-gray-800 text-white py-4 px-4 rounded-lg border border-gray-700 focus:border-red-600 focus:outline-none transition-colors"
               required
             />
@@ -137,6 +159,13 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {error}
+            </div>
+          )}
+
           {/* Forgot Password */}
           <div className="text-right">
             <Link href="#" className="text-red-600 hover:text-red-500 transition-colors text-sm">
@@ -147,9 +176,10 @@ export default function LoginPage() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+            disabled={isLoading}
+            className="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
