@@ -9,6 +9,7 @@ import ContinueWatching from '@/components/ContinueWatching';
 import StudioLogos from '@/components/StudioLogos';
 import ComingSoon from '@/components/ComingSoon';
 import HistoryPlayed from '@/components/HistoryPlayed';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('discovery');
@@ -57,8 +58,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Header />
+    <ProtectedRoute>
+      <div className="min-h-screen bg-black text-white">
+        <Header />
       
       <div className="flex pt-16">
         <Sidebar onSectionChange={setActiveSection} />
@@ -75,5 +77,6 @@ export default function Home() {
         {activeSection !== 'coming-soon' && activeSection !== 'recent-played' && activeSection !== 'download' && <RightSidebar />}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
