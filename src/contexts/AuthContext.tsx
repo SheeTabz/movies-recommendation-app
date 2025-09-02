@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Get registered users from localStorage
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find((u: any) => u.email === email && u.password === password);
+      const foundUser = users.find((u: { email: string; password: string; id: string; fullName: string }) => u.email === email && u.password === password);
       
       if (foundUser) {
         const userWithoutPassword = { id: foundUser.id, fullName: foundUser.fullName, email: foundUser.email };
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
       
       // Check if user already exists
-      if (users.find((u: any) => u.email === email)) {
+      if (users.find((u: { email: string }) => u.email === email)) {
         return false;
       }
       
