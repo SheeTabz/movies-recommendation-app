@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +15,16 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { register, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -21,10 +33,31 @@ export default function RegisterPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Registration data:', formData);
+    setError('');
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    const success = await register(formData.fullName, formData.email, formData.password);
+    
+    if (success) {
+      router.push('/');
+    } else {
+      setError('Email already exists');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -157,12 +190,20 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {error}
+            </div>
+          )}
+
           {/* Register Button */}
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+            disabled={isLoading}
+            className="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
 
