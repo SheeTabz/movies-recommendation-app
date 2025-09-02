@@ -5,7 +5,10 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import HeroSection from '@/components/HeroSection';
 import RightSidebar from '@/components/RightSidebar';
-
+import ContinueWatching from '@/components/ContinueWatching';
+import StudioLogos from '@/components/StudioLogos';
+import ComingSoon from '@/components/ComingSoon';
+import HistoryPlayed from '@/components/HistoryPlayed';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('discovery');
@@ -16,18 +19,22 @@ export default function Home() {
         return (
           <>
             <HeroSection />
-
+            <ContinueWatching />
+            <StudioLogos />
           </>
         );
- 
-  
+      case 'coming-soon':
+        return <ComingSoon />;
+      case 'top-rated':
         return (
           <>
             <HeroSection />
-
+            <ContinueWatching />
+            <StudioLogos />
           </>
         );
-
+      case 'recent-played':
+        return <HistoryPlayed />;
       case 'download':
         return (
           <div className="py-8">
@@ -42,7 +49,8 @@ export default function Home() {
         return (
           <>
             <HeroSection />
-
+            <ContinueWatching />
+            <StudioLogos />
           </>
         );
     }
