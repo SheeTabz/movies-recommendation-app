@@ -4,12 +4,12 @@ A modern, responsive movie recommendation application that helps users discover 
 
 ## 🚀 Live Demo
 
-**[View Live Application](https://your-deployment-url.vercel.app)** *(To be updated after deployment)*
+**[View Live Application](https://filmax-app.netlify.app/)**
 
 ### Test Credentials
 Since the app uses localStorage-based authentication, you can:
 - **Register**: Create a new account with any email/password
-- **Demo Account**: Register with `demo@filmax.com` / `password123` for testing
+- **Login**: Use the credentials provided during registration to access your account
 
 ## ✨ Features
 
