@@ -35,7 +35,7 @@ export default function HistoryPlayed() {
   const yesterdayMovies = movies.slice(4, 8);
   const additionalMovies = movies.slice(8, 12);
 
-  const renderMovieCard = (movie: { id: number; title: string; poster_path: string }, progressPercent: number) => {
+  const renderMovieCard = (movie: { id: number; title: string; poster_path: string | null }, progressPercent: number) => {
     const posterUrl = getPosterUrl(movie.poster_path, 'w342');
     
     return (
