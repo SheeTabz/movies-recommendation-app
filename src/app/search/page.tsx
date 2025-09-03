@@ -92,7 +92,7 @@ export default function SearchPage() {
               <>
                 <div className="mb-6">
                   <p className="text-gray-300">
-                    Found {movies.length} result{movies.length !== 1 ? 's' : ''} for "{searchQuery}"
+                    Found {movies.length} result{movies.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
                   </p>
                 </div>
                 
@@ -140,7 +140,7 @@ export default function SearchPage() {
               </>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-400 text-lg">No movies found for "{searchQuery}"</p>
+                <p className="text-gray-400 text-lg">No movies found for &quot;{searchQuery}&quot;</p>
                 <p className="text-gray-500 text-sm mt-2">Try a different search term</p>
               </div>
             )}

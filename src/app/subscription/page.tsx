@@ -72,7 +72,7 @@ export default function SubscriptionPage() {
       {/* Main Title */}
       <div className="text-center mb-4">
         <h2 className="text-4xl font-bold text-white mb-4">
-          It's easy to get started
+          It&apos;s easy to get started
         </h2>
         <p className="text-gray-300 text-lg">
           Choose the best plan to enjoy the best movies and series
