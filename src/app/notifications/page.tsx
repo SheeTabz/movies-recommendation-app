@@ -11,7 +11,7 @@ export default function NotificationsPage() {
       id: 1,
       type: 'new_release',
       title: 'New Movie Released',
-      message: &apos;Spider-Man: No Way Home is now available to stream&apos;,
+      message: "Spider-Man: No Way Home is now available to stream",
       timestamp: '2 hours ago',
       read: false,
       icon: Play,
@@ -21,7 +21,7 @@ export default function NotificationsPage() {
       id: 2,
       type: 'recommendation',
       title: 'Recommended for You',
-      message: &apos;Based on your viewing history, you might like &quot;The Batman&quot;&apos;,
+      message: "Based on your viewing history, you might like \"The Batman\"",
       timestamp: '5 hours ago',
       read: false,
       icon: Star,
@@ -31,7 +31,7 @@ export default function NotificationsPage() {
       id: 3,
       type: 'subscription',
       title: 'Subscription Update',
-      message: &apos;Your monthly subscription will renew on February 15, 2024&apos;,
+      message: "Your monthly subscription will renew on February 15, 2024",
       timestamp: '1 day ago',
       read: true,
       icon: Calendar,
@@ -61,7 +61,7 @@ export default function NotificationsPage() {
       id: 6,
       type: 'new_release',
       title: 'New Series Available',
-      message: &apos;Season 2 of &quot;Stranger Things&quot; is now streaming&apos;,
+      message: "Season 2 of \"Stranger Things\" is now streaming",
       timestamp: '1 week ago',
       read: true,
       icon: Play,
@@ -182,8 +182,8 @@ export default function NotificationsPage() {
                 <h3 className="text-xl font-semibold text-white mb-2">No notifications</h3>
                 <p className="text-gray-400">
                   {activeFilter === 'unread' 
-                    ? &quot;You&apos;re all caught up! No unread notifications.&quot;
-                    : &quot;No notifications found for this filter.&quot;
+                    ? "You're all caught up! No unread notifications."
+                    : "No notifications found for this filter."
                   }
                 </p>
               </div>
