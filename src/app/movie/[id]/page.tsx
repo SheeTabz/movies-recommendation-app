@@ -32,8 +32,8 @@ export default function MovieDetailPage() {
           </Link>
           <div className="text-center py-12">
             <h1 className="text-2xl font-bold mb-4">Movie Not Found</h1>
-            <p className="text-gray-400 mb-8">{error || &apos;The movie you are looking for does not exist.&apos;}</p>
-            <Link 
+            <p className="text-gray-400 mb-8">{error || 'The movie you are looking for does not exist.'}</p>
+            <Link
               href="/"
               className="bg-red-600 text-white px-6 py-3 btn-rounded font-semibold hover:bg-red-700 transition-colors"
             >
