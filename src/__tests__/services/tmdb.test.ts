@@ -101,7 +101,7 @@ describe('TMDB Service', () => {
       expect(getImageUrl('')).toBe('/placeholder-movie.jpg')
       
       // Test undefined (TypeScript allows this in some cases)
-      expect(getImageUrl(undefined as any)).toBe('/placeholder-movie.jpg')
+      expect(getImageUrl(undefined as string | null)).toBe('/placeholder-movie.jpg')
       
       // Test path without leading slash (function doesn't add slash)
       expect(getImageUrl('poster.jpg')).toBe('https://image.tmdb.org/t/p/w500poster.jpg')
