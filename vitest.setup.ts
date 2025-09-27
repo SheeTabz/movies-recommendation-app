@@ -1,9 +1,7 @@
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+// This file runs before all tests to set up the testing environment
 
-// Mock Next.js-specific modules
-vi.mock('next/router', () => require('next-router-mock'));
-vi.mock('next/navigation', () => require('next-router-mock'));
+import '@testing-library/jest-dom'
 
-// Optional: Mock global fetch if your app uses it (e.g., via axios)
-global.fetch = vi.fn();
+// Mock environment variables for tests
+process.env.NEXT_PUBLIC_TMDB_API_KEY = 'test-api-key'
+process.env.NEXT_PUBLIC_TMDB_BASE_URL = 'https://api.themoviedb.org/3'

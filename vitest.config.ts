@@ -9,8 +9,24 @@ export default defineConfig({
     environment: 'jsdom', // Explicitly set jsdom environment for React testing
     globals: true, // Enable Jest-like globals (describe, it, expect)
     css: true, // Optional: Process CSS modules (useful for Tailwind)
-        coverage: {
+    setupFiles: ['./vitest.setup.ts'], // Setup file for test environment
+    coverage: {
       reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/__tests__/',
+        '**/*.d.ts',
+        '**/*.config.*',
+        'coverage/**'
+      ],
+      thresholds: {
+        global: {
+          branches: 70,
+          functions: 70,
+          lines: 70,
+          statements: 70
+        }
+      }
     },
   },
 });
