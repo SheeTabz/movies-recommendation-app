@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+# Triggers: Run on pushes/PRs to development (CI only), pushes to production (full CI/CD)
+on:
+  push:
+    branches: [development, production]
+  pull_request:
+    branches: [development, production]
+
+jobs:
+  # Job 1: CI Checks (lint, type-check, tests) - runs on all triggers
+  ci-checks:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  
+          cache: 'npm'  
+
+      - name: Install dependencies
+        run: npm ci  
+
+      - name: Run linting
+        run: npm run lint:check 
+
+      - name: Type check
+        run: npm run type-check 
+
+      - name: Run unit tests
+        run: npm run test 
+
+      # - name: Run test coverage (optional, for reporting)
+      #   if: github.event_name == 'pull_request'  # Only on PRs to save time
+      #   run: npm run test:coverage
+
+  # Job 2: Build & Deploy (only on push to production)
+  deploy:
+    needs: ci-checks  
+    if: github.ref == 'refs/heads/production'  # Only on production push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.1  # Official Netlify action
+        with:
+          publish-dir: './out'  # Static export folder
+          production-branch: 'production'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy FILMAX from GitHub Actions"
+        
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        
