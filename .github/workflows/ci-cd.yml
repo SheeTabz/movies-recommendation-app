@@ -58,15 +58,19 @@ jobs:
       - name: Build app
         run: npm run build
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './.next'  # Next.js build folder
-          production-branch: 'production'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy FILMAX from GitHub Actions"
         
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      - name: Trigger Netlify build (using build hook)
+        run: curl -X POST -d '{}' ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
+
+      # - name: Deploy to Netlify
+      #   uses: nwtgck/actions-netlify@v3.0
+      #   with:
+      #     publish-dir: './.next'  # Next.js build folder
+      #     production-branch: 'production'
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     deploy-message: "Deploy FILMAX from GitHub Actions"
+        
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         
