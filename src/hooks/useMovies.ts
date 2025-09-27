@@ -201,3 +201,27 @@ export const useUpcomingMovies = (): UseMoviesResult => {
 
   return { movies, loading, error, hasMore, loadMore, refresh };
 };
+
+
+
+// ✅ BETTER APPROACH - Follows OCP in SOLID and also DRY
+// Create a generic hook that's open for extension:
+
+// const useMovies = (movieType: 'popular' | 'top_rated' | 'now_playing' | 'upcoming'): UseMoviesResult => {
+//   // Generic implementation
+//   const fetchMovies = async (pageNum: number = 1, append: boolean = false) => {
+//     const serviceMap = {
+//       popular: tmdbService.getPopularMovies,
+//       top_rated: tmdbService.getTopRatedMovies,
+//       now_playing: tmdbService.getNowPlayingMovies,
+//       upcoming: tmdbService.getUpcomingMovies
+//     };
+    
+//     const response = await serviceMap[movieType](pageNum);
+//     // ... rest of logic
+//   };
+// };
+
+// // Now you can extend without modifying:
+// export const usePopularMovies = () => useMovies('popular');
+// export const useTrendingMovies = () => useMovies('trending'); // New type!

@@ -15,9 +15,9 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
 }
-
+// Create context first 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+// create the provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
