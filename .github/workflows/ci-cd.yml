@@ -61,7 +61,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          publish-dir: './out'  # Static export folder
+          publish-dir: './.next'  # Next.js build folder
           production-branch: 'production'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy FILMAX from GitHub Actions"
