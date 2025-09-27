@@ -59,7 +59,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.1  # Official Netlify action
+        uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './out'  # Static export folder
           production-branch: 'production'
