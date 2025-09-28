@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
+import OptimizedImage from './OptimizedImage';
 
 interface MovieCardProps {
   category: string;
@@ -20,10 +21,12 @@ export default function MovieCard({
       <div className="relative">
         {/* Movie Image */}
         <div className="w-full h-40 rounded-lg mb-3 group-hover:scale-105 transition-transform duration-200 overflow-hidden">
-          <img 
-            src="https://i.ytimg.com/vi/1AAI0OdvpEg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB6kkQVcHAe7sQBMQoCu86BYlaolQ"
+          <OptimizedImage 
+            src={imageUrl || "https://i.ytimg.com/vi/1AAI0OdvpEg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB6kkQVcHAe7sQBMQoCu86BYlaolQ"}
             alt={title || category} 
             className="w-full h-full object-cover"
+            width={256}
+            height={160}
           />
         </div>
         

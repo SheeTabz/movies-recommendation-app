@@ -5,6 +5,7 @@ import { usePopularMovies } from '@/hooks/useMovies';
 import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb';
 import LoadingSpinner from './LoadingSpinner';
 import Link from 'next/link';
+import OptimizedImage from './OptimizedImage';
 
 export default function HeroSection() {
   const { movies, loading, error } = usePopularMovies();
@@ -40,10 +41,13 @@ export default function HeroSection() {
     <section className="py-8">
       <div className="relative w-full h-[28rem] rounded-lg overflow-hidden">
         {/* Background Image */}
-        <img 
+        <OptimizedImage 
           src={backdropUrl}
           alt={featuredMovie.title}
           className="w-full h-full object-cover"
+          width={1280}
+          height={448}
+          priority={true}
         />
         
         {/* Dark Overlay */}

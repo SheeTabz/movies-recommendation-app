@@ -7,9 +7,8 @@ import HeroSection from '@/components/HeroSection';
 import RightSidebar from '@/components/RightSidebar';
 import ContinueWatching from '@/components/ContinueWatching';
 import StudioLogos from '@/components/StudioLogos';
-import ComingSoon from '@/components/ComingSoon';
-import HistoryPlayed from '@/components/HistoryPlayed';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { LazyWrapper, LazyComingSoon, LazyHistoryPlayed } from '@/components/LazyComponents';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('discovery');
@@ -25,7 +24,11 @@ export default function Home() {
           </>
         );
       case 'coming-soon':
-        return <ComingSoon />;
+        return (
+          <LazyWrapper fallback={<div className="py-8 text-center text-gray-400">Loading movies...</div>}>
+            <LazyComingSoon />
+          </LazyWrapper>
+        );
       case 'top-rated':
         return (
           <>
@@ -35,7 +38,11 @@ export default function Home() {
           </>
         );
       case 'recent-played':
-        return <HistoryPlayed />;
+        return (
+          <LazyWrapper fallback={<div className="py-8 text-center text-gray-400">Loading history...</div>}>
+            <LazyHistoryPlayed />
+          </LazyWrapper>
+        );
       case 'download':
         return (
           <div className="py-8">
