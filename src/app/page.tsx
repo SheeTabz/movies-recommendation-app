@@ -12,7 +12,7 @@ import { LazyWrapper, LazyComingSoon, LazyHistoryPlayed } from '@/components/Laz
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('discovery');
-
+// TEST CI/CD 
   const renderMainContent = () => {
     switch (activeSection) {
       case 'discovery':
