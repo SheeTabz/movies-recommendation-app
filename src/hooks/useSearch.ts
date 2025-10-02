@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { tmdbService, TMDBMovie, TMDBResponse } from '@/lib/tmdb';
 
 export interface UseSearchResult {
@@ -10,6 +10,7 @@ export interface UseSearchResult {
   loadMore: () => void;
   clearSearch: () => void;
   query: string;
+  totalResults: number;
 }
 
 export const useSearch = (): UseSearchResult => {
@@ -19,11 +20,13 @@ export const useSearch = (): UseSearchResult => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [query, setQuery] = useState('');
+  const [totalResults, setTotalResults] = useState(0);
 
   const searchMovies = useCallback(async (searchQuery: string, pageNum: number = 1, append: boolean = false) => {
     if (!searchQuery.trim()) {
       setMovies([]);
       setHasMore(false);
+      setTotalResults(0);
       return;
     }
 
@@ -31,15 +34,36 @@ export const useSearch = (): UseSearchResult => {
       setLoading(true);
       setError(null);
       
-      const response: TMDBResponse<TMDBMovie> = await tmdbService.searchMovies(searchQuery, pageNum);
+      // Fetch multiple pages to get more results for better pagination
+      const maxPages = Math.min(5, pageNum + 4); // Fetch up to 5 pages
+      const promises = [];
       
-      if (append) {
-        setMovies(prev => [...prev, ...response.results]);
-      } else {
-        setMovies(response.results);
+      for (let i = 1; i <= maxPages; i++) {
+        promises.push(tmdbService.searchMovies(searchQuery, i));
       }
       
-      setHasMore(pageNum < response.total_pages);
+      const responses = await Promise.all(promises);
+      const allMovies = responses.flatMap(response => response.results);
+      
+      // Remove duplicates
+      const uniqueMovies = allMovies.filter((movie, index, self) => 
+        index === self.findIndex(m => m.id === movie.id)
+      );
+      
+      if (append) {
+        setMovies(prev => {
+          const combined = [...prev, ...uniqueMovies];
+          return combined.filter((movie, index, self) => 
+            index === self.findIndex(m => m.id === movie.id)
+          );
+        });
+      } else {
+        setMovies(uniqueMovies);
+      }
+      
+      const firstResponse = responses[0];
+      setTotalResults(firstResponse.total_results);
+      setHasMore(pageNum < firstResponse.total_pages);
       setPage(pageNum);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to search movies');
@@ -67,6 +91,7 @@ export const useSearch = (): UseSearchResult => {
     setPage(1);
     setHasMore(false);
     setError(null);
+    setTotalResults(0);
   }, []);
 
   return {
@@ -78,5 +103,6 @@ export const useSearch = (): UseSearchResult => {
     loadMore,
     clearSearch,
     query,
+    totalResults,
   };
 };

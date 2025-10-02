@@ -104,21 +104,21 @@ export default function SearchPage() {
                       href={`/movie/${movie.id}`}
                       className="group cursor-pointer"
                     >
-                      <div className="relative">
+                      <div className="relative overflow-hidden rounded-lg">
                         <img
                           src={getPosterUrl(movie.poster_path, 'w500')}
                           alt={movie.title}
-                          className="w-full aspect-[2/3] object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                          className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-200"
                         />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                       </div>
                       <div className="mt-3">
-                        <h3 className="text-white font-medium text-sm group-hover:text-gray-300 transition-colors line-clamp-2">
+                        <h3 className="text-white font-medium text-sm group-hover:text-red-400 transition-colors line-clamp-2">
                           {movie.title}
                         </h3>
                         <p className="text-gray-400 text-xs mt-1">
                           {movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'} • 
-                          Rating: {movie.vote_average.toFixed(1)}
+                          ⭐ {movie.vote_average.toFixed(1)}
                         </p>
                       </div>
                     </Link>

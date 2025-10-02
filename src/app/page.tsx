@@ -12,6 +12,7 @@ import { LazyWrapper, LazyComingSoon, LazyHistoryPlayed } from '@/components/Laz
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('discovery');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 // TEST CI/CD 
   const renderMainContent = () => {
     switch (activeSection) {
@@ -67,21 +68,25 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-black text-white">
-        <Header />
+        <Header onSearchToggle={setIsSearchOpen} />
       
       <div className="flex pt-16">
         <Sidebar onSectionChange={setActiveSection} />
         
-        <div className={`flex-1 px-8 max-w-full overflow-hidden ${
+        <div className={`flex-1 px-8 max-w-full overflow-hidden transition-all duration-300 ${
           activeSection === 'coming-soon' || activeSection === 'recent-played' || activeSection === 'download' 
             ? 'max-w-none' 
             : ''
-        }`}>
+        } ${isSearchOpen ? 'blur-sm pointer-events-none' : ''}`}>
           {renderMainContent()}
         </div>
         
         {/* Only show right sidebar for discovery and top-rated sections */}
-        {activeSection !== 'coming-soon' && activeSection !== 'recent-played' && activeSection !== 'download' && <RightSidebar />}
+        {activeSection !== 'coming-soon' && activeSection !== 'recent-played' && activeSection !== 'download' && (
+          <div className={`transition-all duration-300 ${isSearchOpen ? 'blur-sm pointer-events-none' : ''}`}>
+            <RightSidebar />
+          </div>
+        )}
       </div>
     </div>
     </ProtectedRoute>
