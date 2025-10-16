@@ -47,30 +47,30 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-20">
-      <div className="max-w-7xl mx-auto px-8 py-8">
+    <div className="min-h-screen bg-black text-white pt-16 md:pt-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
         {/* Search Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-6">Search Movies</h1>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Search Movies</h1>
           
           {/* Search Input */}
           <div className="relative max-w-2xl">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
             </div>
             <input
               type="text"
               placeholder="Search for movies..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full bg-gray-800 text-white pl-10 pr-10 py-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none"
+              className="w-full bg-gray-800 text-white pl-8 md:pl-10 pr-8 md:pr-10 py-2 md:py-3 text-sm md:text-base rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none"
             />
             {searchQuery && (
               <button
                 onClick={handleClearSearch}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-2 md:pr-3 flex items-center"
               >
-                <X className="h-5 w-5 text-gray-400 hover:text-white" />
+                <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 hover:text-white" />
               </button>
             )}
           </div>
@@ -90,14 +90,14 @@ export default function SearchPage() {
               </div>
             ) : movies.length > 0 ? (
               <>
-                <div className="mb-6">
-                  <p className="text-gray-300">
+                <div className="mb-4 md:mb-6">
+                  <p className="text-gray-300 text-sm md:text-base">
                     Found {movies.length} result{movies.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
                   </p>
                 </div>
                 
                 {/* Movies Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-6">
                   {movies.map((movie) => (
                     <Link
                       key={movie.id}
@@ -112,8 +112,8 @@ export default function SearchPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                       </div>
-                      <div className="mt-3">
-                        <h3 className="text-white font-medium text-sm group-hover:text-red-400 transition-colors line-clamp-2">
+                      <div className="mt-2 md:mt-3">
+                        <h3 className="text-white font-medium text-xs md:text-sm group-hover:text-red-400 transition-colors line-clamp-2">
                           {movie.title}
                         </h3>
                         <p className="text-gray-400 text-xs mt-1">
@@ -127,11 +127,11 @@ export default function SearchPage() {
 
                 {/* Load More Button */}
                 {hasMore && (
-                  <div className="text-center mt-8">
+                  <div className="text-center mt-6 md:mt-8">
                     <button
                       onClick={loadMore}
                       disabled={loading}
-                      className="bg-red-600 text-white px-8 py-3 btn-rounded font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-red-600 text-white px-6 md:px-8 py-2 md:py-3 btn-rounded font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                     >
                       {loading ? 'Loading...' : 'Load More'}
                     </button>
@@ -139,8 +139,8 @@ export default function SearchPage() {
                 )}
               </>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-lg">No movies found for &quot;{searchQuery}&quot;</p>
+              <div className="text-center py-8 md:py-12">
+                <p className="text-gray-400 text-base md:text-lg">No movies found for &quot;{searchQuery}&quot;</p>
                 <p className="text-gray-500 text-sm mt-2">Try a different search term</p>
               </div>
             )}
