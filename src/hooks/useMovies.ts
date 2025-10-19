@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react';
-import { tmdbService, TMDBMovie, TMDBResponse } from '@/lib/tmdb';
+import { tmdbService, TMDBMovie, TMDBTVShow, TMDBResponse } from '@/lib/tmdb';
 
 export interface UseMoviesResult {
   movies: TMDBMovie[];
+  loading: boolean;
+  error: string | null;
+  hasMore: boolean;
+  loadMore: () => void;
+  refresh: () => void;
+}
+
+export interface UseTVShowsResult {
+  shows: TMDBTVShow[];
   loading: boolean;
   error: string | null;
   hasMore: boolean;
@@ -204,24 +213,104 @@ export const useUpcomingMovies = (): UseMoviesResult => {
 
 
 
-// ✅ BETTER APPROACH - Follows OCP in SOLID and also DRY
-// Create a generic hook that's open for extension:
+export const useDiscoverMovies = (genreId?: number): UseMoviesResult => {
+  const [movies, setMovies] = useState<TMDBMovie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-// const useMovies = (movieType: 'popular' | 'top_rated' | 'now_playing' | 'upcoming'): UseMoviesResult => {
-//   // Generic implementation
-//   const fetchMovies = async (pageNum: number = 1, append: boolean = false) => {
-//     const serviceMap = {
-//       popular: tmdbService.getPopularMovies,
-//       top_rated: tmdbService.getTopRatedMovies,
-//       now_playing: tmdbService.getNowPlayingMovies,
-//       upcoming: tmdbService.getUpcomingMovies
-//     };
-    
-//     const response = await serviceMap[movieType](pageNum);
-//     // ... rest of logic
-//   };
-// };
+  const fetchMovies = async (pageNum: number = 1, append: boolean = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response: TMDBResponse<TMDBMovie> = await tmdbService.discoverMovies({
+        page: pageNum,
+        with_genres: genreId ? genreId.toString() : undefined,
+      });
+      
+      if (append) {
+        setMovies(prev => [...prev, ...response.results]);
+      } else {
+        setMovies(response.results);
+      }
+      
+      setHasMore(pageNum < response.total_pages);
+      setPage(pageNum);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch movies');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// // Now you can extend without modifying:
-// export const usePopularMovies = () => useMovies('popular');
-// export const useTrendingMovies = () => useMovies('trending'); // New type!
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchMovies(page + 1, true);
+    }
+  };
+
+  const refresh = () => {
+    setPage(1);
+    setHasMore(true);
+    fetchMovies(1, false);
+  };
+
+  useEffect(() => {
+    fetchMovies();
+  }, [genreId]);
+
+  return { movies, loading, error, hasMore, loadMore, refresh };
+};
+
+export const useDiscoverTVShows = (genreId?: number): UseTVShowsResult => {
+  const [shows, setShows] = useState<TMDBTVShow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchShows = async (pageNum: number = 1, append: boolean = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response: TMDBResponse<TMDBTVShow> = await tmdbService.discoverTVShows({
+        page: pageNum,
+        with_genres: genreId ? genreId.toString() : undefined,
+      });
+      
+      if (append) {
+        setShows(prev => [...prev, ...response.results]);
+      } else {
+        setShows(response.results);
+      }
+      
+      setHasMore(pageNum < response.total_pages);
+      setPage(pageNum);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch TV shows');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchShows(page + 1, true);
+    }
+  };
+
+  const refresh = () => {
+    setPage(1);
+    setHasMore(true);
+    fetchShows(1, false);
+  };
+
+  useEffect(() => {
+    fetchShows();
+  }, [genreId]);
+
+  return { shows, loading, error, hasMore, loadMore, refresh };
+};
