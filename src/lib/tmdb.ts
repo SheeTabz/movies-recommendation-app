@@ -29,6 +29,22 @@ export interface TMDBMovie {
   video: boolean;
 }
 
+export interface TMDBTVShow {
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  first_air_date: string;
+  vote_average: number;
+  vote_count: number;
+  genre_ids: number[];
+  adult: boolean;
+  original_language: string;
+  original_name: string;
+  popularity: number;
+}
+
 export interface TMDBGenre {
   id: number;
   name: string;
@@ -115,6 +131,44 @@ export const tmdbService = {
   // Get movie genres
   async getMovieGenres(): Promise<{ genres: TMDBGenre[] }> {
     const response = await tmdbClient.get('/genre/movie/list');
+    return response.data;
+  },
+
+  // Get TV genres
+  async getTVGenres(): Promise<{ genres: TMDBGenre[] }> {
+    const response = await tmdbClient.get('/genre/tv/list');
+    return response.data;
+  },
+
+  // Discover movies
+  async discoverMovies(params: {
+    page?: number;
+    with_genres?: string;
+    sort_by?: string;
+  } = {}): Promise<TMDBResponse<TMDBMovie>> {
+    const response = await tmdbClient.get('/discover/movie', {
+      params: {
+        page: params.page || 1,
+        with_genres: params.with_genres,
+        sort_by: params.sort_by || 'popularity.desc',
+      },
+    });
+    return response.data;
+  },
+
+  // Discover TV shows
+  async discoverTVShows(params: {
+    page?: number;
+    with_genres?: string;
+    sort_by?: string;
+  } = {}): Promise<TMDBResponse<TMDBTVShow>> {
+    const response = await tmdbClient.get('/discover/tv', {
+      params: {
+        page: params.page || 1,
+        with_genres: params.with_genres,
+        sort_by: params.sort_by || 'popularity.desc',
+      },
+    });
     return response.data;
   },
 
