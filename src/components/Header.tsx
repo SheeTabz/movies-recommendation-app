@@ -1,10 +1,11 @@
 'use client';
 
-import { Search, Bell, User, LogOut, X, Menu } from 'lucide-react';
+import { Search, Bell, User, LogOut, X, Menu, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import { useSearch } from '@/hooks/useSearch';
+import { useGenres } from '@/hooks/useGenres';
 import { getPosterUrl } from '@/lib/tmdb';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -19,8 +20,10 @@ export default function Header({ onSearchToggle, onMenuToggle }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showGenresDropdown, setShowGenresDropdown] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { movies, loading, error, search, clearSearch } = useSearch();
+  const { genres } = useGenres();
   
   const ITEMS_PER_PAGE = 20;
 
@@ -63,14 +66,17 @@ export default function Header({ onSearchToggle, onMenuToggle }: HeaderProps) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isSearchOpen && !event.target?.closest?.('.search-container')) {
+      if (isSearchOpen && !(event.target as Element)?.closest?.('.search-container')) {
         toggleSearch();
+      }
+      if (showGenresDropdown && !(event.target as Element)?.closest?.('.genres-dropdown')) {
+        setShowGenresDropdown(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSearchOpen]);
+  }, [isSearchOpen, showGenresDropdown]);
 
   return (
     <>
@@ -89,10 +95,42 @@ export default function Header({ onSearchToggle, onMenuToggle }: HeaderProps) {
         {/* Center - Navigation */}
         {!isSearchOpen && (
           <nav className="hidden lg:flex space-x-8">
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">Movies</a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">Series</a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">Animation</a>
-            <a href="#" className="text-white hover:text-gray-300 transition-colors">Genres</a>
+            <Link href="/" className="text-white hover:text-gray-300 transition-colors">
+              Home
+            </Link>
+            <Link href="/movies" className="text-white hover:text-gray-300 transition-colors">
+              Movies
+            </Link>
+            <Link href="/tv" className="text-white hover:text-gray-300 transition-colors">
+              TV
+            </Link>
+            <div className="relative genres-dropdown">
+              <button 
+                onClick={() => setShowGenresDropdown(!showGenresDropdown)}
+                className="text-white hover:text-gray-300 transition-colors flex items-center gap-1"
+              >
+                Genres
+                <ChevronDown size={16} className={`transition-transform ${showGenresDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Genres Dropdown */}
+              {showGenresDropdown && (
+                <div className="absolute top-full left-0 mt-2 w-96 bg-gray-800 rounded-lg shadow-lg py-4 px-6 z-50">
+                  <div className="grid grid-cols-2 gap-2">
+                    {genres.map((genre) => (
+                      <Link
+                        key={genre.id}
+                        href={`/genre/${genre.id}?name=${encodeURIComponent(genre.name)}`}
+                        className="text-white hover:text-red-400 transition-colors py-2 px-3 rounded hover:bg-gray-700 text-sm"
+                        onClick={() => setShowGenresDropdown(false)}
+                      >
+                        {genre.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
         )}
         
