@@ -3,7 +3,7 @@
 import { Play, Bookmark } from 'lucide-react';
 import { usePopularMovies } from '@/hooks/useMovies';
 import { useWatchlist } from '@/hooks/useWatchlist';
-import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb';
+import { getBackdropUrl } from '@/lib/tmdb';
 import LoadingSpinner from './LoadingSpinner';
 import Link from 'next/link';
 import OptimizedImage from './OptimizedImage';
@@ -37,7 +37,7 @@ export default function HeroSection() {
 
   const featuredMovie = movies[0];
   const backdropUrl = getBackdropUrl(featuredMovie.backdrop_path, 'w1280');
-  const posterUrl = getPosterUrl(featuredMovie.poster_path, 'w500');
+
   
   const handleWatchlistToggle = () => {
     if (isInWatchlist(featuredMovie.id)) {

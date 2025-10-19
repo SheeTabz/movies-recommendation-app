@@ -4,7 +4,7 @@ import { useWatchlist } from '@/hooks/useWatchlist';
 import MovieCard from './MovieCard';
 
 export default function Watchlist() {
-  const { watchlist, removeFromWatchlist } = useWatchlist();
+  const { watchlist } = useWatchlist();
 
   if (watchlist.length === 0) {
     return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Settings, Bell, Shield, CreditCard, Download, LogOut, Edit3, Camera } from 'lucide-react';
+import { User, Settings, Bell, Shield, CreditCard, Edit3, Camera } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Link from 'next/link';

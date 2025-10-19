@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import HeroSection from '@/components/HeroSection';
-import RightSidebar from '@/components/RightSidebar';
+
 import ContinueWatching from '@/components/ContinueWatching';
 import StudioLogos from '@/components/StudioLogos';
 import ProtectedRoute from '@/components/ProtectedRoute';

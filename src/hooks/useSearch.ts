@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { tmdbService, TMDBMovie, TMDBResponse } from '@/lib/tmdb';
+import { tmdbService, TMDBMovie } from '@/lib/tmdb';
 
 export interface UseSearchResult {
   movies: TMDBMovie[];

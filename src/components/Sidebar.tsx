@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, Clock, Bookmark, Heart, Moon, Settings, Home, Calendar, X } from 'lucide-react';
+import { Star, Bookmark, Heart, Moon, Settings, Home, Calendar, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import SidebarMenuItem from './SidebarMenuItem';
 import Link from 'next/link';

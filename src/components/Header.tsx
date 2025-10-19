@@ -250,7 +250,7 @@ export default function Header({ onSearchToggle, onMenuToggle }: HeaderProps) {
               <>
                 <div className="mb-4 md:mb-6 flex flex-col md:flex-row md:justify-between md:items-center space-y-2 md:space-y-0">
                   <p className="text-gray-300 text-sm md:text-base">
-                    Found {movies.length} result{movies.length !== 1 ? 's' : ''} for "{searchQuery}"
+                    Found {movies.length} result{movies.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
                   </p>
                   <p className="text-gray-400 text-xs md:text-sm">
                     Page {currentPage} of {totalPages}
@@ -328,7 +328,7 @@ export default function Header({ onSearchToggle, onMenuToggle }: HeaderProps) {
               </>
             ) : (
               <div className="text-center py-8 md:py-12">
-                <p className="text-gray-400 text-base md:text-lg">No movies found for "{searchQuery}"</p>
+                <p className="text-gray-400 text-base md:text-lg">No movies found for &quot;{searchQuery}&quot;</p>
                 <p className="text-gray-500 text-sm mt-2">Try a different search term</p>
               </div>
             )}

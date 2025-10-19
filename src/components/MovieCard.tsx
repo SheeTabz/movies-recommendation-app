@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
+
 import OptimizedImage from './OptimizedImage';
 import Link from 'next/link';
 import { TMDBMovie } from '@/lib/tmdb';
@@ -12,7 +12,7 @@ interface MovieCardProps {
   imageUrl?: string;
   title?: string;
   year?: string | number;
-  rating?: number;
+
   badge?: {
     text: string;
     color: string;
@@ -33,7 +33,7 @@ export default function MovieCard({
   imageUrl,
   title,
   year,
-  rating,
+
   badge,
   secondaryBadge,
   href,
@@ -41,7 +41,7 @@ export default function MovieCard({
 }: MovieCardProps) {
   const movieTitle = title || movie?.title || category || 'Unknown';
   const movieYear = year || (movie?.release_date ? new Date(movie.release_date).getFullYear() : 'N/A');
-  const movieRating = rating || movie?.vote_average;
+
   const movieImage = imageUrl || (movie ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null);
   const movieHref = href || (movie ? `/movie/${movie.id}` : '#');
   
