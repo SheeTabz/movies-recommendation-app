@@ -6,6 +6,8 @@ interface User {
   id: string;
   fullName: string;
   email: string;
+  phone?: string;
+  dateOfBirth?: string;
 }
 
 interface AuthContextType {
@@ -13,6 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (fullName: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;
   isLoading: boolean;
 }
 // Create context first 
@@ -35,10 +38,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Get registered users from localStorage
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find((u: { email: string; password: string; id: string; fullName: string }) => u.email === email && u.password === password);
+      const foundUser = users.find((u: { email: string; password: string; id: string; fullName: string; phone?: string; dateOfBirth?: string }) => u.email === email && u.password === password);
       
       if (foundUser) {
-        const userWithoutPassword = { id: foundUser.id, fullName: foundUser.fullName, email: foundUser.email };
+        const userWithoutPassword = { 
+          id: foundUser.id, 
+          fullName: foundUser.fullName, 
+          email: foundUser.email,
+          phone: foundUser.phone,
+          dateOfBirth: foundUser.dateOfBirth
+        };
         setUser(userWithoutPassword);
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         return true;
@@ -72,7 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('users', JSON.stringify(users));
       
       // Auto login after registration
-      const userWithoutPassword = { id: newUser.id, fullName: newUser.fullName, email: newUser.email };
+      const userWithoutPassword = { 
+        id: newUser.id, 
+        fullName: newUser.fullName, 
+        email: newUser.email,
+        phone: undefined,
+        dateOfBirth: undefined
+      };
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       
@@ -88,8 +103,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('user');
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Also update in users array
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const userIndex = users.findIndex((u: { id: string }) => u.id === updatedUser.id);
+    if (userIndex !== -1) {
+      users[userIndex] = { 
+        ...users[userIndex], 
+        fullName: updatedUser.fullName, 
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        dateOfBirth: updatedUser.dateOfBirth
+      };
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
