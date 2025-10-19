@@ -2,6 +2,7 @@
 
 import { Play, Bookmark } from 'lucide-react';
 import { usePopularMovies } from '@/hooks/useMovies';
+import { useWatchlist } from '@/hooks/useWatchlist';
 import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb';
 import LoadingSpinner from './LoadingSpinner';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import OptimizedImage from './OptimizedImage';
 
 export default function HeroSection() {
   const { movies, loading, error } = usePopularMovies();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
   
   if (loading) {
     return (
@@ -36,6 +38,14 @@ export default function HeroSection() {
   const featuredMovie = movies[0];
   const backdropUrl = getBackdropUrl(featuredMovie.backdrop_path, 'w1280');
   const posterUrl = getPosterUrl(featuredMovie.poster_path, 'w500');
+  
+  const handleWatchlistToggle = () => {
+    if (isInWatchlist(featuredMovie.id)) {
+      removeFromWatchlist(featuredMovie.id);
+    } else {
+      addToWatchlist(featuredMovie);
+    }
+  };
 
   return (
     <section className="py-4 md:py-8">
@@ -83,10 +93,21 @@ export default function HeroSection() {
                   <span className="sm:hidden">Watch</span>
                 </button>
               </Link>
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-600 text-white px-4 md:px-6 py-2 md:py-3 btn-rounded font-semibold hover:bg-gray-700 transition-colors text-sm md:text-base">
+              <button 
+                onClick={handleWatchlistToggle}
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 btn-rounded font-semibold transition-colors text-sm md:text-base ${
+                  isInWatchlist(featuredMovie.id)
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
+                }`}
+              >
                 <Bookmark size={16} className="md:w-5 md:h-5" />
-                <span className="hidden sm:inline">Add Watchlist</span>
-                <span className="sm:hidden">Watchlist</span>
+                <span className="hidden sm:inline">
+                  {isInWatchlist(featuredMovie.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                </span>
+                <span className="sm:hidden">
+                  {isInWatchlist(featuredMovie.id) ? 'Remove' : 'Add'}
+                </span>
               </button>
             </div>
           </div>
