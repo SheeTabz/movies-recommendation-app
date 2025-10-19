@@ -2,15 +2,43 @@
 
 import { useMovieDetails } from '@/hooks/useMovieDetails';
 import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb';
-import { Play, Bookmark, Star, Calendar, Clock, Globe, ArrowLeft } from 'lucide-react';
+import { Play, Bookmark, Star, Calendar, Clock, Globe, ArrowLeft, Heart } from 'lucide-react';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Header from '@/components/Header';
+import { useWatchlist } from '@/hooks/useWatchlist';
 import { useParams } from 'next/navigation';
 
 export default function MovieDetailPage() {
   const params = useParams();
   const movieId = params?.id ? parseInt(params.id as string) : null;
   const { movie, similarMovies, recommendedMovies, loading, error } = useMovieDetails(movieId);
+  const { 
+    addToWatchlist, 
+    removeFromWatchlist, 
+    addToFavorites, 
+    removeFromFavorites, 
+    isInWatchlist, 
+    isInFavorites 
+  } = useWatchlist();
+
+  const handleWatchlistToggle = () => {
+    if (!movie) return;
+    if (isInWatchlist(movie.id)) {
+      removeFromWatchlist(movie.id);
+    } else {
+      addToWatchlist(movie);
+    }
+  };
+
+  const handleFavoritesToggle = () => {
+    if (!movie) return;
+    if (isInFavorites(movie.id)) {
+      removeFromFavorites(movie.id);
+    } else {
+      addToFavorites(movie);
+    }
+  };
 
   if (loading) {
     return (
@@ -50,8 +78,10 @@ export default function MovieDetailPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <Header />
+      
       {/* Backdrop */}
-      <div className="relative h-96 lg:h-[500px]">
+      <div className="relative h-96 lg:h-[500px] mt-16">
         <img
           src={backdropUrl}
           alt={movie.title}
@@ -137,9 +167,27 @@ export default function MovieDetailPage() {
                 <Play size={20} />
                 Watch Trailer
               </button>
-              <button className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 btn-rounded font-semibold hover:bg-gray-700 transition-colors">
+              <button 
+                onClick={handleWatchlistToggle}
+                className={`flex items-center gap-2 px-6 py-3 btn-rounded font-semibold transition-colors ${
+                  isInWatchlist(movie?.id || 0)
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
+                }`}
+              >
                 <Bookmark size={20} />
-                Add to Watchlist
+                {isInWatchlist(movie?.id || 0) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+              </button>
+              <button 
+                onClick={handleFavoritesToggle}
+                className={`flex items-center gap-2 px-6 py-3 btn-rounded font-semibold transition-colors ${
+                  isInFavorites(movie?.id || 0)
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
+                }`}
+              >
+                <Heart size={20} />
+                {isInFavorites(movie?.id || 0) ? 'Remove from Favorites' : 'Add to Favorites'}
               </button>
             </div>
 
