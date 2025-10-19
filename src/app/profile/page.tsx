@@ -1,12 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Mail, Calendar, Settings, Bell, Shield, CreditCard, Download, LogOut, Edit3, Camera } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/Header';
 import Link from 'next/link';
 
 export default function ProfilePage() {
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    dateOfBirth: ''
+  });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || '',
+        phone: user.phone || '',
+        dateOfBirth: user.dateOfBirth || ''
+      });
+    }
+  }, [user]);
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -16,32 +35,83 @@ export default function ProfilePage() {
     { id: 'privacy', label: 'Privacy', icon: Shield },
   ];
 
-  const mockUser = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    joinDate: 'January 2024',
-    subscription: 'Monthly Subscription',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
+
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    // Full name validation
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
+    }
+
+    // Date of birth validation (must be 18+)
+    if (formData.dateOfBirth) {
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      if (age < 18) {
+        newErrors.dateOfBirth = 'You must be at least 18 years old';
+      }
+    }
+
+    // Phone validation (basic format check)
+    if (formData.phone && !/^[+]?[1-9]?[0-9]{7,15}$/.test(formData.phone.replace(/[\s()-]/g, ''))) {
+      newErrors.phone = 'Please enter a valid phone number';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSaveProfile = () => {
+    if (user && validateForm()) {
+      updateUser({
+        ...user,
+        fullName: formData.fullName,
+        phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth
+      });
+      setIsEditing(false);
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p>Please log in to view your profile.</p>
+      </div>
+    );
+  }
 
   const renderProfileTab = () => (
     <div className="space-y-8">
       {/* Profile Header */}
       <div className="flex items-center space-x-6">
         <div className="relative">
-          <img
-            src={mockUser.avatar}
-            alt={mockUser.name}
-            className="w-24 h-24 rounded-full object-cover"
-          />
+          <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center">
+            <User size={40} className="text-gray-400" />
+          </div>
           <button className="absolute bottom-0 right-0 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors">
             <Camera size={16} className="text-white" />
           </button>
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">{mockUser.name}</h2>
-          <p className="text-gray-400">{mockUser.email}</p>
-          <p className="text-gray-500 text-sm">Member since {mockUser.joinDate}</p>
+          <h2 className="text-2xl font-bold text-white">{user.fullName}</h2>
+          <p className="text-gray-400">{user.email}</p>
+          <p className="text-gray-500 text-sm">Member since {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
         </div>
         <button
           onClick={() => setIsEditing(!isEditing)}
@@ -60,10 +130,14 @@ export default function ProfilePage() {
           </label>
           <input
             type="text"
-            defaultValue={mockUser.name}
+            value={isEditing ? formData.fullName : user.fullName}
+            onChange={(e) => handleInputChange('fullName', e.target.value)}
             disabled={!isEditing}
-            className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg border border-gray-700 focus:border-red-600 focus:outline-none transition-colors disabled:opacity-50"
+            className={`w-full bg-gray-800 text-white py-3 px-4 rounded-lg border transition-colors disabled:opacity-50 focus:outline-none ${
+              errors.fullName ? 'border-red-500 focus:border-red-500' : 'border-gray-700 focus:border-red-600'
+            }`}
           />
+          {errors.fullName && <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>}
         </div>
         <div>
           <label className="block text-gray-300 text-sm font-medium mb-2">
@@ -71,10 +145,11 @@ export default function ProfilePage() {
           </label>
           <input
             type="email"
-            defaultValue={mockUser.email}
-            disabled={!isEditing}
-            className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg border border-gray-700 focus:border-red-600 focus:outline-none transition-colors disabled:opacity-50"
+            value={user.email}
+            disabled={true}
+            className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg border border-gray-700 opacity-50 cursor-not-allowed"
           />
+          <p className="text-gray-500 text-xs mt-1">Email cannot be changed</p>
         </div>
         <div>
           <label className="block text-gray-300 text-sm font-medium mb-2">
@@ -82,10 +157,15 @@ export default function ProfilePage() {
           </label>
           <input
             type="tel"
+            value={isEditing ? formData.phone : (user.phone || '')}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
             placeholder="+1 (555) 123-4567"
             disabled={!isEditing}
-            className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg border border-gray-700 focus:border-red-600 focus:outline-none transition-colors disabled:opacity-50"
+            className={`w-full bg-gray-800 text-white py-3 px-4 rounded-lg border transition-colors disabled:opacity-50 focus:outline-none ${
+              errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-700 focus:border-red-600'
+            }`}
           />
+          {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
         </div>
         <div>
           <label className="block text-gray-300 text-sm font-medium mb-2">
@@ -93,19 +173,36 @@ export default function ProfilePage() {
           </label>
           <input
             type="date"
+            value={isEditing ? formData.dateOfBirth : (user.dateOfBirth || '')}
+            onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
             disabled={!isEditing}
-            className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg border border-gray-700 focus:border-red-600 focus:outline-none transition-colors disabled:opacity-50"
+            max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+            className={`w-full bg-gray-800 text-white py-3 px-4 rounded-lg border transition-colors disabled:opacity-50 focus:outline-none ${
+              errors.dateOfBirth ? 'border-red-500 focus:border-red-500' : 'border-gray-700 focus:border-red-600'
+            }`}
           />
+          {errors.dateOfBirth && <p className="text-red-400 text-xs mt-1">{errors.dateOfBirth}</p>}
+          <p className="text-gray-500 text-xs mt-1">You must be at least 18 years old</p>
         </div>
       </div>
 
       {isEditing && (
         <div className="flex gap-4">
-          <button className="bg-red-600 text-white px-6 py-3 btn-rounded font-semibold hover:bg-red-700 transition-colors">
+          <button 
+            onClick={handleSaveProfile}
+            className="bg-red-600 text-white px-6 py-3 btn-rounded font-semibold hover:bg-red-700 transition-colors"
+          >
             Save Changes
           </button>
           <button
-            onClick={() => setIsEditing(false)}
+            onClick={() => {
+              setIsEditing(false);
+              setFormData({
+                fullName: user?.fullName || '',
+                phone: user?.phone || '',
+                dateOfBirth: user?.dateOfBirth || ''
+              });
+            }}
             className="bg-gray-600 text-white px-6 py-3 btn-rounded font-semibold hover:bg-gray-700 transition-colors"
           >
             Cancel
@@ -124,7 +221,7 @@ export default function ProfilePage() {
         <h3 className="text-lg font-semibold text-white mb-4">Subscription</h3>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white font-medium">{mockUser.subscription}</p>
+            <p className="text-white font-medium">Free Plan</p>
             <p className="text-gray-400 text-sm">Next billing: February 15, 2024</p>
           </div>
           <Link href="/subscription" className="text-red-600 hover:text-red-500 transition-colors">
@@ -329,8 +426,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="bg-gray-900 border-b border-gray-800">
+      <Header />
+      
+      <div className="pt-16 bg-gray-900 border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
