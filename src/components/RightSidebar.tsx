@@ -2,12 +2,18 @@
 
 import { Star } from 'lucide-react';
 import { useTopRatedMovies } from '@/hooks/useMovies';
+import { useGenres } from '@/hooks/useGenres';
 import { getPosterUrl } from '@/lib/tmdb';
 import LoadingSpinner from './LoadingSpinner';
 import Link from 'next/link';
 
-export default function RightSidebar() {
+interface RightSidebarProps {
+  onSectionChange?: (section: string) => void;
+}
+
+export default function RightSidebar({ onSectionChange }: RightSidebarProps) {
   const { movies, loading, error } = useTopRatedMovies();
+  const { genres, loading: genresLoading, error: genresError } = useGenres();
   return (
     <aside className="w-72 xl:w-80 bg-black min-h-screen pt-4 md:pt-8 px-4 md:px-6">
             {/* Top Movies Section */}
@@ -54,43 +60,40 @@ export default function RightSidebar() {
             ))}
           </div>
         )}
-        
-                        <button className="w-full mt-3 md:mt-4 border border-red-600 text-red-600 py-2 btn-rounded font-semibold hover:bg-red-600 hover:text-white transition-colors text-sm">
-                  See All
-                </button>
+
+                        <button 
+                          onClick={() => onSectionChange?.('top-rated')}
+                          className="w-full mt-3 md:mt-4 border border-red-600 text-red-600 py-2 btn-rounded font-semibold hover:bg-red-600 hover:text-white transition-colors text-sm"
+                        >
+                          See All
+                        </button>
       </div>
       
       {/* Favorites Genres Section */}
-      <div>
-        <h3 className="text-white text-base md:text-lg font-bold mb-3 md:mb-4">Favorites Genres</h3>
+      {/* <div>
+        <h3 className="text-white text-base md:text-lg font-bold mb-3 md:mb-4">Movie Genres</h3>
         
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-2">
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Action
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Fantasy
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Comedy
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Sci-Fi
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Drama
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Romance
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Mystery
-          </button>
-                            <button className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors">
-            Horror
-          </button>
-        </div>
-      </div>
+        {genresLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <LoadingSpinner />
+          </div>
+        ) : genresError ? (
+          <div className="text-gray-400 text-xs text-center py-4">
+            Unable to load genres
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-2">
+            {genres.slice(0, 8).map((genre) => (
+              <button 
+                key={genre.id}
+                className="bg-gray-700 text-white py-1 px-2 btn-rounded text-xs hover:bg-gray-600 transition-colors"
+              >
+                {genre.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div> */}
     </aside>
   );
 }
